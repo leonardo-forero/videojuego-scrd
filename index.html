@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consejero Runner</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consejero Runner</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <div class="game-container">
-        <img src="sdis.png" alt="Logo SDIS" class="logo">
-        <canvas id="gameCanvas"></canvas>
-        <div id="tip" class="tip">
-            <p>Tip: Aquí irá un tip para los consejeros de la juventud.</p>
-            <button onclick="resumeGame()">Continuar</button>
-        </div>
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    <div id="messageBox" class="hidden">
+      <p id="tipText">Aquí irá un tip sobre ser Consejero de Juventud.</p>
+      <button onclick="resumeGame()">Continuar</button>
     </div>
-    <script src="script.js"></script>
+    <img id="logo" src="sdis.png" alt="Logo SDIS">
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>

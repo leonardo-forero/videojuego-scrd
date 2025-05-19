@@ -1,121 +1,166 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 300;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// Variables del juego
-let isJumping = false;
-let playerY = 150;
-let playerVelocity = 0;
-let gravity = 1;
+let player = {
+  x: 50,
+  y: canvas.height - 150,
+  width: 50,
+  height: 80,
+  velocityY: 0,
+  jumpPower: 15,
+  gravity: 1,
+  isJumping: false
+};
+
 let obstacles = [];
-let gameSpeed = 5;
+let gameSpeed = 6;
 let score = 0;
-let isGameOver = false;
-const tips = [
-    'Tip 1: Participa activamente en las decisiones que afectan a los jóvenes.',
-    'Tip 2: Promueve la participación juvenil en tu comunidad.',
-    'Tip 3: Sé un líder positivo para otros jóvenes.',
-    'Tip 4: Conoce tus derechos y deberes como consejero.',
-    'Tip 5: Inspira a otros jóvenes a ser parte del cambio.'
+let lives = 3;
+let gameRunning = true;
+let tips = [
+  "Participar activamente en los espacios de decisión.",
+  "Representar a las juventudes de tu localidad.",
+  "Proponer ideas y proyectos que transformen tu comunidad.",
+  "Velar por los derechos de los jóvenes en políticas públicas."
 ];
 
-// Cargar sonidos
-const gameOverSound = new Audio('mensaje.mp3');
+const messageBox = document.getElementById("messageBox");
+const tipText = document.getElementById("tipText");
 
-// Imágenes del juego
-const playerImg = new Image();
-playerImg.src = 'joven.png';
-const bolardoImg = new Image();
-bolardoImg.src = 'bolardo.png';
-const avionImg = new Image();
-avionImg.src = 'avion.png';
+let sound = new Audio("mensaje.mp3");
 
-// Función para dibujar al personaje
 function drawPlayer() {
-    ctx.drawImage(playerImg, 50, playerY, 50, 50);
+  ctx.fillStyle = "red";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
-// Función para crear obstáculos
-function createObstacle() {
-    const isBolardo = Math.random() < 0.7; // Más probabilidad de bolardo que avión
-    if (isBolardo) {
-        obstacles.push({ type: 'bolardo', x: canvas.width, y: canvas.height - 70, width: 40, height: 70 });
-    } else {
-        obstacles.push({ type: 'avion', x: canvas.width, y: 50, width: 60, height: 40 });
+function drawObstacle(ob) {
+  ctx.fillStyle = ob.type === 'bolardo' ? "#333" : "#555";
+  ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+}
+
+function drawScore() {
+  document.getElementById("scoreDisplay").textContent = `Puntaje: ${score}`;
+}
+
+function drawHearts() {
+  const heartsDisplay = document.getElementById("heartsDisplay");
+  heartsDisplay.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    if (i >= lives) heart.classList.add("lost");
+    heartsDisplay.appendChild(heart);
+  }
+}
+
+function spawnObstacle() {
+  const type = Math.random() > 0.5 ? "bolardo" : "avion";
+  let height = type === "bolardo" ? 50 : 40;
+  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 250;
+  obstacles.push({
+    x: canvas.width,
+    y,
+    width: 40,
+    height,
+    type
+  });
+}
+
+function updatePlayer() {
+  if (player.isJumping) {
+    player.velocityY -= player.gravity;
+    player.y -= player.velocityY;
+    if (player.y >= canvas.height - 150) {
+      player.y = canvas.height - 150;
+      player.isJumping = false;
+      player.velocityY = 0;
     }
+  }
 }
 
-// Función para dibujar obstáculos
-function drawObstacles() {
-    for (const obstacle of obstacles) {
-        if (obstacle.type === 'bolardo') {
-            ctx.drawImage(bolardoImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-        } else {
-            ctx.drawImage(avionImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-        }
-        obstacle.x -= gameSpeed;
-    }
-    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
-}
-
-// Función para detectar colisiones
 function checkCollisions() {
-    for (const obstacle of obstacles) {
-        if (
-            50 < obstacle.x + obstacle.width &&
-            50 + 50 > obstacle.x &&
-            playerY < obstacle.y + obstacle.height &&
-            playerY + 50 > obstacle.y
-        ) {
-            isGameOver = true;
-            gameOverSound.play();
-            showTip();
-        }
+  for (let i = 0; i < obstacles.length; i++) {
+    let ob = obstacles[i];
+    if (
+      player.x < ob.x + ob.width &&
+      player.x + player.width > ob.x &&
+      player.y < ob.y + ob.height &&
+      player.y + player.height > ob.y
+    ) {
+      lives--;
+      sound.play();
+      if (lives > 0) {
+        showTip();
+      } else {
+        resetGame();
+      }
+      obstacles.splice(i, 1);
+      break;
     }
+  }
 }
 
-// Función para mostrar tip aleatorio
 function showTip() {
-    const tipElement = document.getElementById('tip');
-    tipElement.querySelector('p').textContent = tips[Math.floor(Math.random() * tips.length)];
-    tipElement.style.display = 'block';
-    gameSpeed = 0;
+  tipText.textContent = tips[Math.floor(Math.random() * tips.length)];
+  messageBox.classList.remove("hidden");
+  gameRunning = false;
 }
 
-// Función para continuar el juego
 function resumeGame() {
-    const tipElement = document.getElementById('tip');
-    tipElement.style.display = 'none';
-    gameSpeed = 5;
-    isGameOver = false;
+  messageBox.classList.add("hidden");
+  gameRunning = true;
+  requestAnimationFrame(gameLoop);
 }
 
-// Función principal del juego
+function resetGame() {
+  lives = 3;
+  score = 0;
+  obstacles = [];
+  player.y = canvas.height - 150;
+  gameRunning = true;
+  requestAnimationFrame(gameLoop);
+}
+
 function gameLoop() {
-    if (!isGameOver) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawPlayer();
-        drawObstacles();
-        checkCollisions();
-        playerVelocity += gravity;
-        playerY += playerVelocity;
-        if (playerY > 150) {
-            playerY = 150;
-            isJumping = false;
-        }
-        if (Math.random() < 0.02) createObstacle();
-        requestAnimationFrame(gameLoop);
-    }
+  if (!gameRunning) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPlayer();
+  drawHearts();
+  drawScore();
+
+  updatePlayer();
+  checkCollisions();
+
+  for (let i = 0; i < obstacles.length; i++) {
+    obstacles[i].x -= gameSpeed;
+  }
+  obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
+
+  if (Math.random() < 0.02) spawnObstacle();
+
+  score++;
+  requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
-
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' || e.code === 'ArrowUp') {
-        if (!isJumping && !isGameOver) {
-            playerVelocity = -15;
-            isJumping = true;
-        }
-    }
+document.addEventListener("keydown", e => {
+  if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping) {
+    player.isJumping = true;
+    player.velocityY = player.jumpPower;
+  }
 });
+
+// Crear contenedores visuales
+const scoreDiv = document.createElement("div");
+scoreDiv.id = "scoreDisplay";
+document.body.appendChild(scoreDiv);
+
+const heartsDiv = document.createElement("div");
+heartsDiv.id = "heartsDisplay";
+document.body.appendChild(heartsDiv);
+
+// Iniciar juego
+gameLoop();
