@@ -56,10 +56,10 @@ let gameRunning = false;
 let scoreInterval;
 
 let tips = [
-  "Participar activamente en los espacios de decisión.",
-  "Representar a las juventudes de tu localidad.",
-  "Proponer ideas y proyectos que transformen tu comunidad.",
-  "Velar por los derechos de los jóvenes en políticas públicas."
+  "Participa activamente en la Mesa!",
+  "Representas a niñas, niños y adolescentes de tu localidad.",
+  "Propón ideas que transformen tu vida y la de los demás.",
+  "Se guardián y guardiana de los derechos culturales en Bogotá."
 ];
 
 const messageBox = document.getElementById("messageBox");
