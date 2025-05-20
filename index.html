@@ -7,17 +7,23 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Logo Secretaría Distrital de Integración Social -->
   <img src="sdis.png" alt="Logo SDIS" class="logo" />
+
+  <!-- Canvas para el juego -->
   <canvas id="gameCanvas"></canvas>
 
+  <!-- Contenedores de puntaje y vidas -->
   <div id="scoreDisplay">Puntaje: 0</div>
   <div id="heartsDisplay"></div>
 
+  <!-- Caja de mensajes para tips con botón para continuar -->
   <div id="messageBox" class="hidden">
     <p id="tipText"></p>
     <button onclick="resumeGame()">Continuar</button>
   </div>
 
+  <!-- Script JS -->
   <script src="script.js"></script>
 </body>
 </html>

@@ -3,19 +3,19 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const personajeImg = new Image();
-personajeImg.src = "personaje.png";
+let playerImage = new Image();
+playerImage.src = "joven.png";
 
-const bolardoImg = new Image();
-bolardoImg.src = "bolardo.png";
+let bolardoImage = new Image();
+bolardoImage.src = "bolardo.png";
 
-const avionImg = new Image();
-avionImg.src = "avion.png";
+let avionImage = new Image();
+avionImage.src = "avion.png";
 
 let player = {
-  x: 80,
+  x: 50,
   y: canvas.height - 150,
-  width: 60,
+  width: 50,
   height: 80,
   velocityY: 0,
   jumpPower: 15,
@@ -27,7 +27,9 @@ let obstacles = [];
 let gameSpeed = 6;
 let score = 0;
 let lives = 3;
-let gameRunning = true;
+let gameRunning = false;
+let scoreInterval;
+
 let tips = [
   "Participar activamente en los espacios de decisión.",
   "Representar a las juventudes de tu localidad.",
@@ -39,14 +41,13 @@ const messageBox = document.getElementById("messageBox");
 const tipText = document.getElementById("tipText");
 
 let sound = new Audio("mensaje.mp3");
-let scoreInterval;
 
 function drawPlayer() {
-  ctx.drawImage(personajeImg, player.x, player.y, player.width, player.height);
+  ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
 }
 
 function drawObstacle(ob) {
-  const img = ob.type === "bolardo" ? bolardoImg : avionImg;
+  const img = ob.type === 'bolardo' ? bolardoImage : avionImage;
   ctx.drawImage(img, ob.x, ob.y, ob.width, ob.height);
 }
 
@@ -68,11 +69,11 @@ function drawHearts() {
 function spawnObstacle() {
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
   let height = type === "bolardo" ? 50 : 40;
-  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 200;
+  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 180;
   obstacles.push({
     x: canvas.width,
     y,
-    width: 50,
+    width: 40,
     height,
     type
   });
@@ -122,7 +123,10 @@ function showTip() {
 function resumeGame() {
   messageBox.classList.add("hidden");
   gameRunning = true;
-  scoreInterval = setInterval(() => score++, 1000);
+  scoreInterval = setInterval(() => {
+    score++;
+    drawScore();
+  }, 1000);
   requestAnimationFrame(gameLoop);
 }
 
@@ -132,6 +136,7 @@ function resetGame() {
   obstacles = [];
   player.y = canvas.height - 150;
   drawHearts();
+  drawScore();
   resumeGame();
 }
 
@@ -140,8 +145,8 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPlayer();
-  drawScore();
   drawHearts();
+  drawScore();
 
   updatePlayer();
   checkCollisions();
@@ -165,28 +170,24 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// Iniciar corazones y puntaje
-drawHearts();
-scoreInterval = setInterval(() => score++, 1000);
+// Crear contenedores visuales
+const scoreDiv = document.createElement("div");
+scoreDiv.id = "scoreDisplay";
+document.body.appendChild(scoreDiv);
 
-// Iniciar juego
+const heartsDiv = document.createElement("div");
+heartsDiv.id = "heartsDisplay";
+document.body.appendChild(heartsDiv);
+
+// Esperar a que se carguen las imágenes
 let imagesLoaded = 0;
-const totalImages = 3;
-
 [playerImage, bolardoImage, avionImage].forEach(img => {
   img.onload = () => {
     imagesLoaded++;
-    if (imagesLoaded === totalImages) {
-      // Crear contenedores visuales
-      const scoreDiv = document.createElement("div");
-      scoreDiv.id = "scoreDisplay";
-      document.body.appendChild(scoreDiv);
-
-      const heartsDiv = document.createElement("div");
-      heartsDiv.id = "heartsDisplay";
-      document.body.appendChild(heartsDiv);
-
-      gameLoop();
+    if (imagesLoaded === 3) {
+      drawHearts();
+      drawScore();
+      resumeGame();
     }
   };
 });

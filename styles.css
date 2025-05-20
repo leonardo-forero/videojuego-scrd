@@ -61,6 +61,10 @@ canvas {
   padding: 20px;
   text-align: center;
   z-index: 10;
+  max-width: 90%;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  border-radius: 10px;
 }
 
 #messageBox.hidden {
@@ -73,4 +77,10 @@ button {
   background: #ffcc00;
   border: none;
   cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #e6b800;
 }
