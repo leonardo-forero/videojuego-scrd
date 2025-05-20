@@ -170,4 +170,23 @@ drawHearts();
 scoreInterval = setInterval(() => score++, 1000);
 
 // Iniciar juego
-gameLoop();
+let imagesLoaded = 0;
+const totalImages = 3;
+
+[playerImage, bolardoImage, avionImage].forEach(img => {
+  img.onload = () => {
+    imagesLoaded++;
+    if (imagesLoaded === totalImages) {
+      // Crear contenedores visuales
+      const scoreDiv = document.createElement("div");
+      scoreDiv.id = "scoreDisplay";
+      document.body.appendChild(scoreDiv);
+
+      const heartsDiv = document.createElement("div");
+      heartsDiv.id = "heartsDisplay";
+      document.body.appendChild(heartsDiv);
+
+      gameLoop();
+    }
+  };
+});
