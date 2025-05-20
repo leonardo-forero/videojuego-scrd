@@ -89,15 +89,23 @@ function drawHearts() {
 }
 
 function spawnObstacle() {
+  const lastObstacle = obstacles[obstacles.length - 1];
+
+  // Si hay un obstáculo y aún está muy cerca del borde derecho, no se genera otro
+  if (lastObstacle && lastObstacle.x > canvas.width - 300) {
+    return;
+  }
+
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
   let height = 80;
   let y = type === "bolardo"
     ? canvas.height - height - 20
     : canvas.height - height - 60;
+    
   obstacles.push({
     x: canvas.width,
     y,
-    width: 80,
+    width: 50,  // Aquí se conserva tu ancho actual
     height,
     type
   });
@@ -194,6 +202,21 @@ document.addEventListener("keydown", e => {
   }
   if (e.code === "Enter" && !gameRunning && !messageBox.classList.contains("hidden")) {
     resumeGame();
+  }
+});
+
+// Para móviles: salto al tocar la pantalla o hacer clic
+document.getElementById('gameCanvas').addEventListener('touchstart', () => {
+  if (!player.isJumping) {
+    player.velocityY = -player.jumpPower;
+    player.isJumping = true;
+  }
+});
+
+document.getElementById('gameCanvas').addEventListener('click', () => {
+  if (!player.isJumping) {
+    player.velocityY = -player.jumpPower;
+    player.isJumping = true;
   }
 });
 
