@@ -206,13 +206,16 @@ function gameLoop() {
 
 // Función para iniciar el juego
 function startGame() {
+  const gameCanvas = document.getElementById("gameCanvas");
+  gameCanvas.classList.add("active");  // Mostrar el canvas
+
   const startButton = document.getElementById("startButton");
   startButton.style.display = "none";
 
   lives = 3;
   score = 0;
   obstacles = [];
-  player.y = canvas.height - player.height - 20;
+  player.y = gameCanvas.height - player.height - 20;
 
   drawHearts();
   drawScore();
