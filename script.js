@@ -209,6 +209,28 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
+// Esperar a que todo el DOM esté cargado para asignar eventos a botones
+document.addEventListener("DOMContentLoaded", () => {
+  const startButton = document.getElementById("startButton");
+  const continueButton = document.getElementById("continueButton");
+  const canvas = document.getElementById("gameCanvas");
+
+  // Botón de inicio
+  startButton.addEventListener("click", () => {
+    startButton.style.display = "none";
+	canvas.classList.add("active");  // Mostrar el canvas al iniciar el juego
+    resizeCanvas();
+    drawHearts();
+    drawScore();
+    resumeGame();
+  });
+
+  // Botón de continuar después de un tip
+  continueButton.addEventListener("click", () => {
+    resumeGame();
+  });
+});
+
 document.addEventListener("keydown", e => {
   if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping && gameRunning) {
     player.isJumping = true;
