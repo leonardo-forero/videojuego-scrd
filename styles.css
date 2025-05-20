@@ -21,9 +21,9 @@ body {
 
 /* Contenedor principal del juego */
 #gameContainer {
-  width: 100%;
-  max-width: 95vw;
-  padding: 0 1rem;
+  text-align: center;
+  margin: auto;
+   ax-width: 95vw; /* más flexible para pantallas pequeñas */
   position: relative;
 }
 
