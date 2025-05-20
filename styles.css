@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background-color: #6f4c9c;
+  background: linear-gradient(to bottom, #ffe259, #ffa751); /* degradado amarillo */
   color: white;
   display: flex;
   flex-direction: column;

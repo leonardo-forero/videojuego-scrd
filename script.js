@@ -36,12 +36,12 @@ avionImage.src = "avion.png";
 
 let player = {
   x: 50,
-  y: 0,  // se ajusta en resizeCanvas
-  width: 100,
-  height: 140,
+  y: canvas.height - 180,
+  width: 120,
+  height: 160,
   velocityY: 0,
-  jumpPower: 15,
-  gravity: 1,
+  jumpPower: 20,   // antes era 15
+  gravity: 0.8,    // antes era 1
   isJumping: false
 };
 
