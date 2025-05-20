@@ -165,6 +165,11 @@ function resumeGame() {
   requestAnimationFrame(gameLoop);
 }
 
+function iniciarJuego() {
+  document.getElementById('playButton').style.display = 'none';
+  resumeGame();
+}
+
 function resetGame() {
   lives = 3;
   score = 0;
@@ -245,6 +250,19 @@ function startGame() {
 }
 
 document.getElementById("startButton").addEventListener("click", startGame);
+
+const playButton = document.getElementById('playButton');
+
+// Escucha clic en PC
+playButton.addEventListener('click', () => {
+  iniciarJuego();
+});
+
+// Escucha toque en móvil
+playButton.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // Evita que algunos móviles lo ignoren
+  iniciarJuego();
+}, { passive: false });
 
 // Esperar carga de imágenes
 let imagesLoaded = 0;
