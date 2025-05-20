@@ -71,18 +71,26 @@
   <!-- Script JS -->
   <script src="script.js"></script>
   <script>
-    // Botón continuar para cerrar mensaje y reanudar juego
-    document.getElementById("continueButton").addEventListener("click", () => {
+    const continueButton = document.getElementById("continueButton");
+
+    // Click para PC
+    continueButton.addEventListener("click", () => {
       document.getElementById("messageBox").classList.add("hidden");
-      // Reanudar juego desde JS
       if (typeof resumeGame === "function") resumeGame();
     });
 
-    // Permitir continuar con Enter
-    document.getElementById("continueButton").addEventListener("keydown", e => {
+    // Touch para móviles
+    continueButton.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      document.getElementById("messageBox").classList.add("hidden");
+      if (typeof resumeGame === "function") resumeGame();
+    });
+
+    // Permitir continuar con Enter o espacio en teclado
+    continueButton.addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        document.getElementById("continueButton").click();
+        continueButton.click();
       }
     });
   </script>
