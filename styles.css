@@ -22,7 +22,7 @@ body {
 /* Contenedor principal del juego */
 #gameContainer {
   width: 100%;
-  max-width: 960px;
+  max-width: 95vw;
   padding: 0 1rem;
   position: relative;
 }
