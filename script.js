@@ -43,8 +43,8 @@ let player = {
   width: 120,
   height: 160,
   velocityY: 0,
-  jumpPower: 20,   // antes era 15
-  gravity: 0.6,    // antes era 1
+  jumpPower: 20,
+  gravity: 0.6,
   isJumping: false
 };
 
@@ -108,7 +108,7 @@ function spawnObstacle() {
   obstacles.push({
     x: canvas.width,
     y,
-    width: 50,  // Aquí se conserva tu ancho actual
+    width: 40,
     height,
     type
   });
