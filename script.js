@@ -34,6 +34,9 @@ bolardoImage.src = "bolardo.png";
 let avionImage = new Image();
 avionImage.src = "avion.png";
 
+let backgroundImage = new Image();
+backgroundImage.src = "bogota_fondo.jpg";
+
 let player = {
   x: 50,
   y: canvas.height - 180,
@@ -176,6 +179,10 @@ function gameLoop() {
   if (!gameRunning) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 👇 Dibuja la imagen de fondo antes de cualquier otra cosa
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
   drawPlayer();
   drawHearts();
   drawScore();
@@ -222,10 +229,10 @@ document.getElementById('gameCanvas').addEventListener('click', () => {
 
 // Esperar carga de imágenes
 let imagesLoaded = 0;
-[playerImage, bolardoImage, avionImage].forEach(img => {
+[playerImage, bolardoImage, avionImage, backgroundImage].forEach(img => {
   img.onload = () => {
     imagesLoaded++;
-    if (imagesLoaded === 3) {
+    if (imagesLoaded === 4) {
       resizeCanvas();
       drawHearts();
       drawScore();
