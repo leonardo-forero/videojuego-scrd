@@ -1,10 +1,30 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Fijo tamaño para que quede en recuadro (podemos ajustar después)
-canvas.width = 800;
-canvas.height = 400;
+// Redimensiona el canvas de forma responsive
+function resizeCanvas() {
+  let maxWidth = 800;
+  let maxHeight = 400;
+  let ratio = maxWidth / maxHeight;
 
+  let width = window.innerWidth > maxWidth ? maxWidth : window.innerWidth * 0.95;
+  let height = width / ratio;
+
+  canvas.width = width;
+  canvas.height = height;
+
+  // Reajustar posición inicial del jugador tras resize
+  player.y = canvas.height - player.height - 20;
+
+  // Reposicionar obstáculos ya existentes
+  obstacles.forEach(ob => {
+    ob.y = ob.type === "bolardo" ? canvas.height - ob.height - 20 : canvas.height - ob.height - 60;
+  });
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+// Carga imágenes
 let playerImage = new Image();
 playerImage.src = "joven.png";
 
@@ -16,9 +36,9 @@ avionImage.src = "avion.png";
 
 let player = {
   x: 50,
-  y: canvas.height - 180,  // ajuste para el nuevo tamaño
-  width: 120,  // aumentado tamaño
-  height: 160,
+  y: 0,  // se ajusta en resizeCanvas
+  width: 100,
+  height: 140,
   velocityY: 0,
   jumpPower: 15,
   gravity: 1,
@@ -26,7 +46,7 @@ let player = {
 };
 
 let obstacles = [];
-let gameSpeed = 3; // disminuimos la velocidad
+let gameSpeed = 3;
 let score = 0;
 let lives = 3;
 let gameRunning = false;
@@ -70,8 +90,10 @@ function drawHearts() {
 
 function spawnObstacle() {
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
-  let height = type === "bolardo" ? 80 : 80; // aumentado tamaño
-  let y = type === "bolardo" ? canvas.height - 180 : canvas.height - 220;
+  let height = 80;
+  let y = type === "bolardo"
+    ? canvas.height - height - 20
+    : canvas.height - height - 60;
   obstacles.push({
     x: canvas.width,
     y,
@@ -85,8 +107,8 @@ function updatePlayer() {
   if (player.isJumping) {
     player.velocityY -= player.gravity;
     player.y -= player.velocityY;
-    if (player.y >= canvas.height - 180) {
-      player.y = canvas.height - 180;
+    if (player.y >= canvas.height - player.height - 20) {
+      player.y = canvas.height - player.height - 20;
       player.isJumping = false;
       player.velocityY = 0;
     }
@@ -136,7 +158,7 @@ function resetGame() {
   lives = 3;
   score = 0;
   obstacles = [];
-  player.y = canvas.height - 180;
+  player.y = canvas.height - player.height - 20;
   drawHearts();
   drawScore();
   resumeGame();
@@ -170,27 +192,18 @@ document.addEventListener("keydown", e => {
     player.isJumping = true;
     player.velocityY = player.jumpPower;
   }
-  // Presionar Enter para cerrar mensaje y continuar
   if (e.code === "Enter" && !gameRunning && !messageBox.classList.contains("hidden")) {
     resumeGame();
   }
 });
 
-// Crear contenedores visuales
-const scoreDiv = document.createElement("div");
-scoreDiv.id = "scoreDisplay";
-document.body.appendChild(scoreDiv);
-
-const heartsDiv = document.createElement("div");
-heartsDiv.id = "heartsDisplay";
-document.body.appendChild(heartsDiv);
-
-// Esperar a que se carguen las imágenes
+// Esperar carga de imágenes
 let imagesLoaded = 0;
 [playerImage, bolardoImage, avionImage].forEach(img => {
   img.onload = () => {
     imagesLoaded++;
     if (imagesLoaded === 3) {
+      resizeCanvas();
       drawHearts();
       drawScore();
       resumeGame();
