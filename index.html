@@ -10,17 +10,20 @@
   <!-- Logo Secretaría Distrital de Integración Social -->
   <img src="sdis.png" alt="Logo SDIS" class="logo" />
 
-  <!-- Canvas para el juego -->
-  <canvas id="gameCanvas"></canvas>
+  <!-- Contenedor principal del juego para centrar y agrupar -->
+  <div id="gameContainer" style="position: relative; width: 100%; max-width: 960px; margin: 0 auto;">
+    <!-- Canvas para el juego -->
+    <canvas id="gameCanvas"></canvas>
 
-  <!-- Contenedores de puntaje y vidas -->
-  <div id="scoreDisplay">Puntaje: 0</div>
-  <div id="heartsDisplay"></div>
+    <!-- Contenedores de puntaje y vidas -->
+    <div id="scoreDisplay">Puntaje: 0</div>
+    <div id="heartsDisplay"></div>
 
-  <!-- Caja de mensajes para tips con botón para continuar -->
-  <div id="messageBox" class="hidden">
-    <p id="tipText"></p>
-    <button onclick="resumeGame()">Continuar</button>
+    <!-- Caja de mensajes para tips con botón para continuar -->
+    <div id="messageBox" class="hidden">
+      <p id="tipText"></p>
+      <button onclick="resumeGame()">Continuar</button>
+    </div>
   </div>
 
   <!-- Script JS -->

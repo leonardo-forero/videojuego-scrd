@@ -1,7 +1,9 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
+// Fijo tamaño para que quede en recuadro (podemos ajustar después)
+canvas.width = 800;
+canvas.height = 400;
 
 let playerImage = new Image();
 playerImage.src = "joven.png";
@@ -14,9 +16,9 @@ avionImage.src = "avion.png";
 
 let player = {
   x: 50,
-  y: canvas.height - 150,
-  width: 50,
-  height: 80,
+  y: canvas.height - 180,  // ajuste para el nuevo tamaño
+  width: 120,  // aumentado tamaño
+  height: 160,
   velocityY: 0,
   jumpPower: 15,
   gravity: 1,
@@ -24,7 +26,7 @@ let player = {
 };
 
 let obstacles = [];
-let gameSpeed = 6;
+let gameSpeed = 3; // disminuimos la velocidad
 let score = 0;
 let lives = 3;
 let gameRunning = false;
@@ -68,12 +70,12 @@ function drawHearts() {
 
 function spawnObstacle() {
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
-  let height = type === "bolardo" ? 50 : 40;
-  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 180;
+  let height = type === "bolardo" ? 80 : 80; // aumentado tamaño
+  let y = type === "bolardo" ? canvas.height - 180 : canvas.height - 220;
   obstacles.push({
     x: canvas.width,
     y,
-    width: 40,
+    width: 80,
     height,
     type
   });
@@ -83,8 +85,8 @@ function updatePlayer() {
   if (player.isJumping) {
     player.velocityY -= player.gravity;
     player.y -= player.velocityY;
-    if (player.y >= canvas.height - 150) {
-      player.y = canvas.height - 150;
+    if (player.y >= canvas.height - 180) {
+      player.y = canvas.height - 180;
       player.isJumping = false;
       player.velocityY = 0;
     }
@@ -134,7 +136,7 @@ function resetGame() {
   lives = 3;
   score = 0;
   obstacles = [];
-  player.y = canvas.height - 150;
+  player.y = canvas.height - 180;
   drawHearts();
   drawScore();
   resumeGame();
@@ -158,15 +160,19 @@ function gameLoop() {
 
   obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
 
-  if (Math.random() < 0.02) spawnObstacle();
+  if (Math.random() < 0.01) spawnObstacle();
 
   requestAnimationFrame(gameLoop);
 }
 
 document.addEventListener("keydown", e => {
-  if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping) {
+  if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping && gameRunning) {
     player.isJumping = true;
     player.velocityY = player.jumpPower;
+  }
+  // Presionar Enter para cerrar mensaje y continuar
+  if (e.code === "Enter" && !gameRunning && !messageBox.classList.contains("hidden")) {
+    resumeGame();
   }
 });
 
