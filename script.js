@@ -13,12 +13,19 @@ function resizeCanvas() {
   canvas.width = width;
   canvas.height = height;
 
-  // Reajustar posición inicial del jugador tras resize
+  // Escalar jugador proporcional al tamaño del canvas
+  player.width = canvas.width * 0.1;
+  player.height = canvas.height * 0.4;
+  player.jumpPower = canvas.height * 0.05;
   player.y = canvas.height - player.height - 20;
 
-  // Reposicionar obstáculos ya existentes
+  // Reajustar obstáculos ya existentes
   obstacles.forEach(ob => {
-    ob.y = ob.type === "bolardo" ? canvas.height - ob.height - 20 : canvas.height - ob.height - 60;
+    ob.width = canvas.width * 0.05;
+    ob.height = canvas.height * 0.2;
+    ob.y = ob.type === "bolardo"
+      ? canvas.height - ob.height - 20
+      : canvas.height - ob.height - 60;
   });
 }
 
@@ -39,11 +46,11 @@ backgroundImage.src = "bogota_fondo.jpg";
 
 let player = {
   x: 50,
-  y: canvas.height - 180,
-  width: 80,
-  height: 160,
+  y: 0, // se ajustará después del resize
+  width: 0,
+  height: 0,
   velocityY: 0,
-  jumpPower: 20,
+  jumpPower: 0,
   gravity: 0.6,
   isJumping: false
 };
@@ -95,23 +102,16 @@ function spawnObstacle() {
   const lastObstacle = obstacles[obstacles.length - 1];
 
   // Si hay un obstáculo y aún está muy cerca del borde derecho, no se genera otro
-  if (lastObstacle && lastObstacle.x > canvas.width - 300) {
-    return;
-  }
+  if (lastObstacle && lastObstacle.x > canvas.width - 300) return;
 
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
-  let height = 80;
+  let height = canvas.height * 0.2;
+  let width = canvas.width * 0.05;
   let y = type === "bolardo"
     ? canvas.height - height - 20
     : canvas.height - height - 60;
-    
-  obstacles.push({
-    x: canvas.width,
-    y,
-    width: 40,
-    height,
-    type
-  });
+
+  obstacles.push({ x: canvas.width, y, width, height, type });
 }
 
 function updatePlayer() {
@@ -213,20 +213,13 @@ document.addEventListener("keydown", e => {
 });
 
 // Toque en móvil
-canvas.addEventListener('touchstart', (e) => {
+document.addEventListener('touchstart', function(e) {
   e.preventDefault();
-  if (!player.isJumping) {
-    player.velocityY = -player.jumpPower;
+  if (!player.isJumping && gameRunning) {
+    player.velocityY = player.jumpPower;
     player.isJumping = true;
   }
 }, { passive: false });
-
-document.getElementById('gameCanvas').addEventListener('click', () => {
-  if (!player.isJumping) {
-    player.velocityY = -player.jumpPower;
-    player.isJumping = true;
-  }
-});
 
 function startGame() {
   // Oculta el botón
