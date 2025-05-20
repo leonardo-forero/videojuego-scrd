@@ -1,89 +1,199 @@
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background: linear-gradient(to top, #ffcc00, #ffffff);
-  font-family: sans-serif;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Fijo tamaño para que quede en recuadro (podemos ajustar después)
+canvas.width = 800;
+canvas.height = 400;
+
+let playerImage = new Image();
+playerImage.src = "joven.png";
+
+let bolardoImage = new Image();
+bolardoImage.src = "bolardo.png";
+
+let avionImage = new Image();
+avionImage.src = "avion.png";
+
+let player = {
+  x: 50,
+  y: canvas.height - 180,  // ajuste para el nuevo tamaño
+  width: 120,  // aumentado tamaño
+  height: 160,
+  velocityY: 0,
+  jumpPower: 15,
+  gravity: 1,
+  isJumping: false
+};
+
+let obstacles = [];
+let gameSpeed = 3; // disminuimos la velocidad
+let score = 0;
+let lives = 3;
+let gameRunning = false;
+let scoreInterval;
+
+let tips = [
+  "Participar activamente en los espacios de decisión.",
+  "Representar a las juventudes de tu localidad.",
+  "Proponer ideas y proyectos que transformen tu comunidad.",
+  "Velar por los derechos de los jóvenes en políticas públicas."
+];
+
+const messageBox = document.getElementById("messageBox");
+const tipText = document.getElementById("tipText");
+
+let sound = new Audio("mensaje.mp3");
+
+function drawPlayer() {
+  ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
 }
 
-canvas {
-  display: block;
-  background: url('bogota_fondo.jpg') no-repeat center center fixed;
-  background-size: cover;
+function drawObstacle(ob) {
+  const img = ob.type === 'bolardo' ? bolardoImage : avionImage;
+  ctx.drawImage(img, ob.x, ob.y, ob.width, ob.height);
 }
 
-/* Logo centrado y grande */
-.logo {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: auto;
-  z-index: 20;
+function drawScore() {
+  document.getElementById("scoreDisplay").textContent = `Puntaje: ${score}`;
 }
 
-#scoreDisplay {
-  position: absolute;
-  top: 20px;
-  left: 120px;
-  color: red;
-  font-weight: bold;
-  font-size: 24px;
-  z-index: 5;
+function drawHearts() {
+  const heartsDisplay = document.getElementById("heartsDisplay");
+  heartsDisplay.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    if (i >= lives) heart.classList.add("lost");
+    heartsDisplay.appendChild(heart);
+  }
 }
 
-#heartsDisplay {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 5;
+function spawnObstacle() {
+  const type = Math.random() > 0.5 ? "bolardo" : "avion";
+  let height = type === "bolardo" ? 80 : 80; // aumentado tamaño
+  let y = type === "bolardo" ? canvas.height - 180 : canvas.height - 220;
+  obstacles.push({
+    x: canvas.width,
+    y,
+    width: 80,
+    height,
+    type
+  });
 }
 
-.heart {
-  width: 24px;
-  height: 24px;
-  background: url('corazon.png') no-repeat center center;
-  background-size: contain;
+function updatePlayer() {
+  if (player.isJumping) {
+    player.velocityY -= player.gravity;
+    player.y -= player.velocityY;
+    if (player.y >= canvas.height - 180) {
+      player.y = canvas.height - 180;
+      player.isJumping = false;
+      player.velocityY = 0;
+    }
+  }
 }
 
-.heart.lost {
-  filter: grayscale(100%);
+function checkCollisions() {
+  for (let i = 0; i < obstacles.length; i++) {
+    let ob = obstacles[i];
+    if (
+      player.x < ob.x + ob.width &&
+      player.x + player.width > ob.x &&
+      player.y < ob.y + ob.height &&
+      player.y + player.height > ob.y
+    ) {
+      lives--;
+      sound.play();
+      if (lives > 0) {
+        showTip();
+      } else {
+        resetGame();
+      }
+      obstacles.splice(i, 1);
+      break;
+    }
+  }
 }
 
-#messageBox {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  color: black;
-  border: 4px solid red;
-  padding: 20px;
-  text-align: center;
-  z-index: 10;
-  max-width: 90%;
-  width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  border-radius: 10px;
+function showTip() {
+  tipText.textContent = tips[Math.floor(Math.random() * tips.length)];
+  messageBox.classList.remove("hidden");
+  gameRunning = false;
+  clearInterval(scoreInterval);
 }
 
-#messageBox.hidden {
-  display: none;
+function resumeGame() {
+  messageBox.classList.add("hidden");
+  gameRunning = true;
+  scoreInterval = setInterval(() => {
+    score++;
+    drawScore();
+  }, 1000);
+  requestAnimationFrame(gameLoop);
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #ffcc00;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+function resetGame() {
+  lives = 3;
+  score = 0;
+  obstacles = [];
+  player.y = canvas.height - 180;
+  drawHearts();
+  drawScore();
+  resumeGame();
 }
 
-button:hover {
-  background: #e6b800;
+function gameLoop() {
+  if (!gameRunning) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPlayer();
+  drawHearts();
+  drawScore();
+
+  updatePlayer();
+  checkCollisions();
+
+  for (let i = 0; i < obstacles.length; i++) {
+    obstacles[i].x -= gameSpeed;
+    drawObstacle(obstacles[i]);
+  }
+
+  obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
+
+  if (Math.random() < 0.01) spawnObstacle();
+
+  requestAnimationFrame(gameLoop);
 }
+
+document.addEventListener("keydown", e => {
+  if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping && gameRunning) {
+    player.isJumping = true;
+    player.velocityY = player.jumpPower;
+  }
+  // Presionar Enter para cerrar mensaje y continuar
+  if (e.code === "Enter" && !gameRunning && !messageBox.classList.contains("hidden")) {
+    resumeGame();
+  }
+});
+
+// Crear contenedores visuales
+const scoreDiv = document.createElement("div");
+scoreDiv.id = "scoreDisplay";
+document.body.appendChild(scoreDiv);
+
+const heartsDiv = document.createElement("div");
+heartsDiv.id = "heartsDisplay";
+document.body.appendChild(heartsDiv);
+
+// Esperar a que se carguen las imágenes
+let imagesLoaded = 0;
+[playerImage, bolardoImage, avionImage].forEach(img => {
+  img.onload = () => {
+    imagesLoaded++;
+    if (imagesLoaded === 3) {
+      drawHearts();
+      drawScore();
+      resumeGame();
+    }
+  };
+});
