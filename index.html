@@ -5,6 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Juego Consejero Juvenil</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    button {
+      touch-action: manipulation; /* Mejora la respuesta táctil en móviles */
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    #gameContainer {
+      text-align: center;
+      margin: auto;
+      max-width: 820px;
+      position: relative;
+    }
+    #scoreDisplay, #heartsDisplay {
+      margin-top: 10px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 1px 1px 2px black;
+    }
+    #messageBox {
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
   <!-- Logo Secretaría Distrital de Integración Social -->
@@ -20,26 +48,43 @@
     <div id="heartsDisplay"></div>
 
     <!-- Caja de mensajes para tips con botón para continuar -->
-    <div id="messageBox" class="hidden">
-     <p id="tipText"></p>
-     <button id="continueButton">Continuar</button>
+    <div id="messageBox" class="hidden" role="alertdialog" aria-live="assertive" aria-modal="true">
+      <p id="tipText"></p>
+      <button id="continueButton" aria-label="Continuar juego">Continuar</button>
     </div>
   
-  <!-- Botón de inicio -->
-  <button id="startButton">Jugar</button>
-  
+    <!-- Botón de inicio -->
+    <button id="startButton" aria-label="Iniciar juego">Jugar</button>
+  </div>
+
   <div id="gameInstructions">
-  <h2>¿Cómo jugar?</h2>
-  <ul>
-    <li>Tienes <strong>3 vidas</strong> para jugar.</li>
-    <li>Usa la <strong>flecha ↑</strong> de tu teclado para <strong>saltar</strong>.</li>
-    <li>Si tocas un bolardo o un avión, verás un mensaje alentador con ideas para seguir participando.</li>
-    <li>Tu <strong>puntaje</strong> aparece abajo. ¡Súbelo esquivando obstáculos!</li>
-    <li>Este juego es para que <strong>te diviertas</strong> y <strong>conozcas tus derechos</strong> como consejera o consejero de la <strong>Mesa de Niñas, Niños y Adolescentes</strong>.</li>
-  </ul>
-</div>
+    <h2>¿Cómo jugar?</h2>
+    <ul>
+      <li>Tienes <strong>3 vidas</strong> para jugar.</li>
+      <li>Usa la <strong>flecha ↑</strong> de tu teclado para <strong>saltar</strong>.</li>
+      <li>Si tocas un bolardo o un avión, verás un mensaje alentador con ideas para seguir participando.</li>
+      <li>Tu <strong>puntaje</strong> aparece abajo. ¡Súbelo esquivando obstáculos!</li>
+      <li>Este juego es para que <strong>te diviertas</strong> y <strong>conozcas tus derechos</strong> como consejera o consejero de la <strong>Mesa de Niñas, Niños y Adolescentes</strong>.</li>
+    </ul>
+  </div>
 
   <!-- Script JS -->
   <script src="script.js"></script>
+  <script>
+    // Botón continuar para cerrar mensaje y reanudar juego
+    document.getElementById("continueButton").addEventListener("click", () => {
+      document.getElementById("messageBox").classList.add("hidden");
+      // Reanudar juego desde JS
+      if (typeof resumeGame === "function") resumeGame();
+    });
+
+    // Permitir continuar con Enter
+    document.getElementById("continueButton").addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        document.getElementById("continueButton").click();
+      }
+    });
+  </script>
 </body>
 </html>
