@@ -212,13 +212,22 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// Para móviles: salto al tocar la pantalla o hacer clic
-document.getElementById('gameCanvas').addEventListener('touchstart', () => {
+// Clic en PC
+canvas.addEventListener('click', () => {
   if (!player.isJumping) {
     player.velocityY = -player.jumpPower;
     player.isJumping = true;
   }
 });
+
+// Toque en móvil
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  if (!player.isJumping) {
+    player.velocityY = -player.jumpPower;
+    player.isJumping = true;
+  }
+}, { passive: false });
 
 document.getElementById('gameCanvas').addEventListener('click', () => {
   if (!player.isJumping) {
