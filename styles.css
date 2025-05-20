@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: sans-serif;
-  background: linear-gradient(to bottom, #ffe259, #ffa751); /* degradado amarillo */
+  background: linear-gradient(to bottom, #6f4c9c, #4b3570); /* degradado púrpura */
   color: white;
   display: flex;
   flex-direction: column;
@@ -33,7 +33,7 @@ body {
   height: auto;
   display: block;
   border: 2px solid #ffb71b;
-  background-color: white;
+  background-color: #6f4c9c;
 }
 
 /* Puntaje y vidas */
@@ -63,7 +63,7 @@ body {
   top: 30%;
   left: 50%;
   transform: translate(-50%, -30%);
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(111, 76, 156, 0.95); /* púrpura institucional translúcido */
   padding: 1.5rem;
   border: 2px solid #ffb71b;
   border-radius: 8px;
