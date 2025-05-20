@@ -3,10 +3,19 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const personajeImg = new Image();
+personajeImg.src = "personaje.png";
+
+const bolardoImg = new Image();
+bolardoImg.src = "bolardo.png";
+
+const avionImg = new Image();
+avionImg.src = "avion.png";
+
 let player = {
-  x: 50,
+  x: 80,
   y: canvas.height - 150,
-  width: 50,
+  width: 60,
   height: 80,
   velocityY: 0,
   jumpPower: 15,
@@ -30,15 +39,15 @@ const messageBox = document.getElementById("messageBox");
 const tipText = document.getElementById("tipText");
 
 let sound = new Audio("mensaje.mp3");
+let scoreInterval;
 
 function drawPlayer() {
-  ctx.fillStyle = "red";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  ctx.drawImage(personajeImg, player.x, player.y, player.width, player.height);
 }
 
 function drawObstacle(ob) {
-  ctx.fillStyle = ob.type === 'bolardo' ? "#333" : "#555";
-  ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+  const img = ob.type === "bolardo" ? bolardoImg : avionImg;
+  ctx.drawImage(img, ob.x, ob.y, ob.width, ob.height);
 }
 
 function drawScore() {
@@ -59,11 +68,11 @@ function drawHearts() {
 function spawnObstacle() {
   const type = Math.random() > 0.5 ? "bolardo" : "avion";
   let height = type === "bolardo" ? 50 : 40;
-  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 250;
+  let y = type === "bolardo" ? canvas.height - 150 : canvas.height - 200;
   obstacles.push({
     x: canvas.width,
     y,
-    width: 40,
+    width: 50,
     height,
     type
   });
@@ -107,11 +116,13 @@ function showTip() {
   tipText.textContent = tips[Math.floor(Math.random() * tips.length)];
   messageBox.classList.remove("hidden");
   gameRunning = false;
+  clearInterval(scoreInterval);
 }
 
 function resumeGame() {
   messageBox.classList.add("hidden");
   gameRunning = true;
+  scoreInterval = setInterval(() => score++, 1000);
   requestAnimationFrame(gameLoop);
 }
 
@@ -120,8 +131,8 @@ function resetGame() {
   score = 0;
   obstacles = [];
   player.y = canvas.height - 150;
-  gameRunning = true;
-  requestAnimationFrame(gameLoop);
+  drawHearts();
+  resumeGame();
 }
 
 function gameLoop() {
@@ -129,20 +140,21 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPlayer();
-  drawHearts();
   drawScore();
+  drawHearts();
 
   updatePlayer();
   checkCollisions();
 
   for (let i = 0; i < obstacles.length; i++) {
     obstacles[i].x -= gameSpeed;
+    drawObstacle(obstacles[i]);
   }
+
   obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
 
   if (Math.random() < 0.02) spawnObstacle();
 
-  score++;
   requestAnimationFrame(gameLoop);
 }
 
@@ -153,14 +165,9 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// Crear contenedores visuales
-const scoreDiv = document.createElement("div");
-scoreDiv.id = "scoreDisplay";
-document.body.appendChild(scoreDiv);
-
-const heartsDiv = document.createElement("div");
-heartsDiv.id = "heartsDisplay";
-document.body.appendChild(heartsDiv);
+// Iniciar corazones y puntaje
+drawHearts();
+scoreInterval = setInterval(() => score++, 1000);
 
 // Iniciar juego
 gameLoop();
