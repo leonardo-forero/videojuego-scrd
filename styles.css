@@ -93,6 +93,32 @@ body {
   background-color: #e0a81a;
 }
 
+#gameInstructions {
+  max-width: 960px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ffb71b;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+}
+
+#gameInstructions h2 {
+  text-align: center;
+  color: #ffb71b;
+  margin-bottom: 1rem;
+}
+
+#gameInstructions ul {
+  list-style-type: "⭐ ";
+  padding-left: 1.2rem;
+}
+
+#gameInstructions li {
+  margin-bottom: 0.8rem;
+}
+
 /* Responsividad extra */
 @media (max-width: 600px) {
   #scoreDisplay, #heartsDisplay {
@@ -110,5 +136,18 @@ body {
 
   #messageBox button {
     font-size: 0.9rem;
+  }
+  
+    #gameInstructions {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  #gameInstructions li {
+    margin-bottom: 0.6rem;
+  }
+
+  #gameInstructions h2 {
+    font-size: 1.1rem;
   }
 }
