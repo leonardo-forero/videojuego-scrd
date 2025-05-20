@@ -44,17 +44,10 @@ body {
 }
 
 /* Corazones (vidas) */
-.heart {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  margin: 0 4px;
-  background-color: red;
-  border-radius: 50%;
-}
-
-.heart.lost {
-  background-color: #999;
+.heart-img {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
 }
 
 /* Caja de mensaje para los tips */

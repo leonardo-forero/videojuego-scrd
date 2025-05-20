@@ -90,11 +90,13 @@ function drawScore() {
 function drawHearts() {
   const heartsDisplay = document.getElementById("heartsDisplay");
   heartsDisplay.innerHTML = "";
+
   for (let i = 0; i < 3; i++) {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    if (i >= lives) heart.classList.add("lost");
-    heartsDisplay.appendChild(heart);
+    const heartImg = document.createElement("img");
+    heartImg.src = i < lives ? "corazon.png" : "corazon_gris.png"; // Usa gris si no tienes vida
+    heartImg.alt = "vida";
+    heartImg.classList.add("heart-img");
+    heartsDisplay.appendChild(heartImg);
   }
 }
 
