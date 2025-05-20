@@ -40,7 +40,7 @@ backgroundImage.src = "bogota_fondo.jpg";
 let player = {
   x: 50,
   y: canvas.height - 180,
-  width: 120,
+  width: 80,
   height: 160,
   velocityY: 0,
   jumpPower: 20,
