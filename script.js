@@ -43,7 +43,7 @@ let player = {
   width: 120,
   height: 160,
   velocityY: 0,
-  jumpPower: 20,   // antes era 15
+  jumpPower: 25,   // antes era 15
   gravity: 0.8,    // antes era 1
   isJumping: false
 };
