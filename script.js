@@ -167,11 +167,6 @@ function resumeGame() {
   requestAnimationFrame(gameLoop);
 }
 
-function iniciarJuego() {
-  document.getElementById('playButton').style.display = 'none';
-  resumeGame();
-}
-
 function resetGame() {
   lives = 3;
   score = 0;
@@ -187,7 +182,7 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 👇 Dibuja la imagen de fondo antes de cualquier otra cosa
+  // Dibuja la imagen de fondo antes de cualquier otra cosa
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
   drawPlayer();
@@ -209,28 +204,50 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Esperar a que todo el DOM esté cargado para asignar eventos a botones
-document.addEventListener("DOMContentLoaded", () => {
+// Función para iniciar el juego
+function startGame() {
   const startButton = document.getElementById("startButton");
-  const continueButton = document.getElementById("continueButton");
-  const canvas = document.getElementById("gameCanvas");
+  startButton.style.display = "none";
 
-  // Botón de inicio
-  startButton.addEventListener("click", () => {
-    startButton.style.display = "none";
-	canvas.classList.add("active");  // Mostrar el canvas al iniciar el juego
-    resizeCanvas();
-    drawHearts();
+  lives = 3;
+  score = 0;
+  obstacles = [];
+  player.y = canvas.height - player.height - 20;
+
+  drawHearts();
+  drawScore();
+
+  gameRunning = true;
+  scoreInterval = setInterval(() => {
+    score++;
     drawScore();
-    resumeGame();
-  });
+  }, 1000);
+  gameLoop();
+}
 
-  // Botón de continuar después de un tip
-  continueButton.addEventListener("click", () => {
-    resumeGame();
-  });
+// Eventos para iniciar el juego con click o toque
+const startButton = document.getElementById("startButton");
+
+startButton.addEventListener("click", () => {
+  startGame();
 });
 
+startButton.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  startGame();
+}, { passive: false });
+
+// Listener global para salto con toque (touchstart) en el canvas o cualquier parte (excepto el botón)
+document.addEventListener('touchstart', function(e) {
+  if (e.target.id === 'startButton') return; // Ignora el botón para no interferir
+  e.preventDefault();
+  if (!player.isJumping && gameRunning) {
+    player.velocityY = player.jumpPower;
+    player.isJumping = true;
+  }
+}, { passive: false });
+
+// Control de teclado para salto y reinicio
 document.addEventListener("keydown", e => {
   if ((e.code === "Space" || e.code === "ArrowUp") && !player.isJumping && gameRunning) {
     player.isJumping = true;
@@ -240,53 +257,6 @@ document.addEventListener("keydown", e => {
     resumeGame();
   }
 });
-
-// Toque en móvil
-document.addEventListener('touchstart', function(e) {
-  e.preventDefault();
-  if (!player.isJumping && gameRunning) {
-    player.velocityY = player.jumpPower;
-    player.isJumping = true;
-  }
-}, { passive: false });
-
-function startGame() {
-  // Oculta el botón
-  document.getElementById("startButton").style.display = "none";
-
-  // Reinicia variables del juego
-  lives = 3;
-  score = 0;
-  obstacles = [];
-  player.y = canvas.height - player.height - 20;
-
-  // Muestra corazones y puntaje
-  drawHearts();
-  drawScore();
-
-  // Inicia juego
-  gameRunning = true;
-  scoreInterval = setInterval(() => {
-    score++;
-    drawScore();
-  }, 1000);
-  gameLoop();
-}
-
-document.getElementById("startButton").addEventListener("click", startGame);
-
-const playButton = document.getElementById('playButton');
-
-// Escucha clic en PC
-playButton.addEventListener('click', () => {
-  iniciarJuego();
-});
-
-// Escucha toque en móvil
-playButton.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // Evita que algunos móviles lo ignoren
-  iniciarJuego();
-}, { passive: false });
 
 // Esperar carga de imágenes
 let imagesLoaded = 0;
