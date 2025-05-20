@@ -212,14 +212,6 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// Clic en PC
-canvas.addEventListener('click', () => {
-  if (!player.isJumping) {
-    player.velocityY = -player.jumpPower;
-    player.isJumping = true;
-  }
-});
-
 // Toque en móvil
 canvas.addEventListener('touchstart', (e) => {
   e.preventDefault();
@@ -236,6 +228,31 @@ document.getElementById('gameCanvas').addEventListener('click', () => {
   }
 });
 
+function startGame() {
+  // Oculta el botón
+  document.getElementById("startButton").style.display = "none";
+
+  // Reinicia variables del juego
+  lives = 3;
+  score = 0;
+  obstacles = [];
+  player.y = canvas.height - player.height - 20;
+
+  // Muestra corazones y puntaje
+  drawHearts();
+  drawScore();
+
+  // Inicia juego
+  gameRunning = true;
+  scoreInterval = setInterval(() => {
+    score++;
+    drawScore();
+  }, 1000);
+  gameLoop();
+}
+
+document.getElementById("startButton").addEventListener("click", startGame);
+
 // Esperar carga de imágenes
 let imagesLoaded = 0;
 [playerImage, bolardoImage, avionImage, backgroundImage].forEach(img => {
@@ -245,7 +262,7 @@ let imagesLoaded = 0;
       resizeCanvas();
       drawHearts();
       drawScore();
-      resumeGame();
+      // Esperar a que el usuario haga clic en "Jugar"
     }
   };
 });
