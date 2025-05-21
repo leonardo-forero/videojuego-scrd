@@ -14,9 +14,9 @@ function resizeCanvas() {
   canvas.height = height;
 
   // Escalar jugador proporcional al tamaño del canvas
-  player.width = canvas.width * 0.12;
+  player.width = canvas.width * 0.10;
   player.height = canvas.height * 0.3;
-  player.jumpPower = canvas.height * 0.035;
+  player.jumpPower = canvas.height * 0.05;
   player.y = canvas.height - player.height - 20;
   
   gameSpeed = canvas.width * 0.004;
