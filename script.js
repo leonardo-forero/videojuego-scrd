@@ -14,10 +14,12 @@ function resizeCanvas() {
   canvas.height = height;
 
   // Escalar jugador proporcional al tamaño del canvas
-  player.width = canvas.width * 0.1;
-  player.height = canvas.height * 0.4;
-  player.jumpPower = canvas.height * 0.05;
+  player.width = canvas.width * 0.12;
+  player.height = canvas.height * 0.3;
+  player.jumpPower = canvas.height * 0.035;
   player.y = canvas.height - player.height - 20;
+  
+  gameSpeed = canvas.width * 0.004;
 
   // Reajustar obstáculos ya existentes
   obstacles.forEach(ob => {
