@@ -16,7 +16,7 @@ function resizeCanvas() {
   // Escalar jugador proporcional al tamaño del canvas
   player.width = canvas.width * 0.1;
   player.height = canvas.height * 0.4;
-  player.jumpPower = canvas.height * 0.06;
+  player.jumpPower = canvas.height * 0.05;
   player.y = canvas.height - player.height - 20;
 
   // Reajustar obstáculos ya existentes
@@ -111,7 +111,7 @@ function spawnObstacle() {
   let width = canvas.width * 0.05;
   let y = type === "bolardo"
     ? canvas.height - height - 20
-    : canvas.height - height - 60;
+    : canvas.height - height - 30;
 
   obstacles.push({ x: canvas.width, y, width, height, type });
 }
